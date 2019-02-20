@@ -29,7 +29,20 @@ LRESULT CALLBACK BaseWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPA
 	}
 }
 
-BaseWindow::BaseWindow() : m_hwnd(NULL) { }
+BaseWindow::BaseWindow() : m_hwnd(NULL) { 
+	ZeroMemory(&wc, sizeof(wc));
+	/* register window class */
+	wc.style = CS_OWNDC;
+	wc.lpfnWndProc = WindowProc;
+	wc.cbClsExtra = 0;
+	wc.cbWndExtra = 0;
+	wc.hInstance = GetModuleHandle(NULL);
+	wc.hIcon = LoadIcon(g_hinstDLL, MAKEINTRESOURCE(IDI_ICON1));
+	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wc.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
+	wc.lpszMenuName = NULL;
+	
+}
 
 HWND BaseWindow::Create(
 		PCSTR lpWindowName,
@@ -43,19 +56,9 @@ HWND BaseWindow::Create(
 		HMENU hMenu = 0
 	)
 	{
-		ZeroMemory(&wc, sizeof(wc));
-		/* register window class */
-		wc.style = CS_OWNDC;
-		wc.lpfnWndProc = WindowProc;
-		wc.cbClsExtra = 0;
-		wc.cbWndExtra = 0;
-		wc.hInstance = GetModuleHandle(NULL);
-		wc.hIcon = LoadIcon(g_hinstDLL, MAKEINTRESOURCE(IDI_ICON1));
-		wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-		wc.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
-		wc.lpszMenuName = NULL;
-		wc.lpszClassName = ClassName();
 
+
+		wc.lpszClassName = ClassName();
 		RegisterClass(&wc);
 
 		return CreateWindowEx(

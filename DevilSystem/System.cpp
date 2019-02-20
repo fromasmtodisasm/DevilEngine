@@ -24,7 +24,7 @@ bool CSystem::Init()
 	if (LoadSubSystems()) {
 		m_pIInput->Init(this);
 		m_pIApp->Init(this);
-		m_pIRenderer->Init(this);
+		//m_pIRenderer->Init(this);
 		res = true;
 	}
 

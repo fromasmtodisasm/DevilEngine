@@ -1,6 +1,7 @@
 #pragma once
 #define DLL
 #include "IRender.h"
+#include "model.h"
 
 class CRenderer : public IRenderer
 {
@@ -24,6 +25,8 @@ public:
 	bool DeleteContext(WIN_HWND hWnd);
 
 	virtual void SetCamera(CCamera *pCamera);
+
+	void RenderModel();
 
 	void Update();
 private:
@@ -50,4 +53,5 @@ private:
 	WIN_HGLRC m_hGLrc = 0;
 	CCamera *m_Camera;
 	bool bReInit;
+	Model *m_pModel;
 };

@@ -1,6 +1,8 @@
 #include "OpenglApp.h"
 #include <vector>
 
+#include "resource1.h"
+
 using std::vector;
 
 
@@ -19,18 +21,13 @@ int OpenglApp::Run()
 {
 	
 	mainWindow->SetSize(700,700);
+	mainWindow->setMenuName(MAKEINTRESOURCE(IDR_MENU1));
 	mainWindow->Create(NULL);
-	openGLRenderingWindow_1->SetSize(500,500);
+	openGLRenderingWindow_1->SetSize(700, 700);
 	openGLRenderingWindow_1->Create(mainWindow);
-	//HWND statusBar = CreateStatusWindow()
-	HMENU hMenu = CreateMenu();
-	HMENU hFile = CreateMenu();
-	AppendMenu(hMenu, MF_POPUP, (UINT_PTR)hFile, "File");
-	AppendMenu(hFile, MF_STRING, FILE_MENU_NEW, "New");
-	AppendMenu(hFile, MF_STRING, FILE_MENU_OPEN, "Open");
-	AppendMenu(hFile, MF_SEPARATOR, NULL, NULL);
-	AppendMenu(hFile, MF_STRING, FILE_MENU_EXIT, "Exit");
-	SetMenu(mainWindow->GetWindow(), hMenu);
+
+	m_pIRenderer->Init(system);
+
 	//openGLRenderingWindow_2->SetSize(500, 500);
 	//openGLRenderingWindow_2->Create(mainWindow);
 	//HWND hButton_Exit = CreateWindowEx(
@@ -83,7 +80,7 @@ void OpenglApp::Init(ISystem *pSystem)
 	openGLRenderingWindow_1 = new OpenGLWindow("Rendering Window 1");
 	openGLRenderingWindow_2 = new OpenGLWindow("Rendering Window 2");
 	m_pIRenderer = (IRenderer*)system->GetIRenderer();
-	//render->Init(openGLRenderingWindow->)
+	
 	openGLRenderingWindow_1->SetRender(m_pIRenderer);
 	openGLRenderingWindow_1->SetInputHandler(system->GetIInput());
 }

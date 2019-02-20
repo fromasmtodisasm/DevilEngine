@@ -6,12 +6,37 @@
 
 CRenderer::CRenderer()
 {
-	ClearColor.r = ClearColor.g = ClearColor.b = 0.7;
+	m_pModel = new Model("model.obj");
+	ClearColor.r = ClearColor.g = ClearColor.b = 0.2;
 }
 
 CRenderer::~CRenderer()
 {
 
+}
+
+void CRenderer::RenderModel()
+{
+	for (int i = 0; i < m_pModel->nfaces(); i++) {
+		std::vector<int> face = m_pModel->face(i);
+		//glColor3f(1.0f, 0.f, 0.f);
+
+		glBegin(GL_TRIANGLES);
+		for (int j = 0; j < 3; j++) {
+			
+			Vec3f v = m_pModel->vert(face[j]);
+			Vec3f n = m_pModel->norm(face[j]);
+			glNormal3f(n.x, n.y, n.z); glVertex3f(v.x, v.y, v.z);
+			
+			//int x0 = (v0.x+1.)*width/2.;
+//            int y0 = (v0.y+1.)*height/2.;
+//            int x1 = (v1.x+1.)*width/2.;
+//            int y1 = (v1.y+1.)*height/2.;
+//            line(x0, y0, x1, y1, image, white);
+		}
+		glEnd();
+	}
+	
 }
 
 void DrawPlane(float w, int step, float y)
@@ -74,11 +99,14 @@ void CRenderer::Update()
 		y_angle += (float)pInput->GetIMouse()->GetDeltaY();
 	}
 
-	quadObj = gluNewQuadric(); // создаем новый объект 
+	//quadObj = gluNewQuadric(); // создаем новый объект 
 							   // для создания сфер и цилиндров
 
 
 	glClearColor(ClearColor.r, ClearColor.g, ClearColor.b, 0.0f);
+
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glLoadIdentity();
@@ -99,7 +127,7 @@ void CRenderer::Update()
 	//glTranslated(-2, 0, 0); // сдвигаемся влево
 	glRotated(45, 1, 0, 0); // поворачиваем
 	glColor3d(0, 1, 0);
-	gluQuadricDrawStyle(quadObj, GLU_FILL); // устанавливаем
+	//gluQuadricDrawStyle(quadObj, GLU_FILL); // устанавливаем
 							 // стиль: проволочный
 	gluCylinder(quadObj, 0.5, 0.75, 1, 15, 15);
 	glPopMatrix();
@@ -122,7 +150,7 @@ void CRenderer::Update()
 		DrawPlane(20, 40, 0);
 
 	glPopMatrix();
-	glColor3f(1,1,1);
+	glColor3f(0.8, 0.8, 0.8);
 	DrawPlane(20, 40, 0);
 
 	//Повернуть вокруг центра на угол theta
@@ -140,12 +168,65 @@ void CRenderer::Update()
 	//glPushMatrix();
 
 	glColor3f(0.7,0.1,0.9);
-	gluQuadricDrawStyle(quadObj, GLU_LINE); // устанавливаем
+	//gluQuadricDrawStyle(quadObj, GLU_FILL); // устанавливаем
 							// стиль: сплошной
 	glScalef(3, 3, 3);
 
-	gluSphere(quadObj, 1.0, 30, 30); // рисуем сферу
+	//gluSphere(quadObj, 1.0, 30, 30); // рисуем сферу
 									 // радиусом 0.5
+	RenderModel();
+	glColor3f(1.0, 0.0, 0.0);
+		glPushMatrix();
+		glTranslatef(0, 0, -2.0f);
+		RenderModel();
+		glPopMatrix();
+
+		glColor3f(1.0, 0.0, 1.0);
+		glPushMatrix();
+		glTranslatef(0, 0, 2.0f);
+		RenderModel();
+		glPopMatrix();
+
+		glColor3f(1.0, 1.0, 0.0);
+		glPushMatrix();
+		glTranslatef(2.0, 0, 0.0f);
+		RenderModel();
+		glPopMatrix();
+
+		glPushMatrix();
+		glTranslatef(-2.0, 0.0, 0.0f);
+		RenderModel();
+		glPopMatrix();
+
+		glPushMatrix();
+		glTranslatef(0.0, -2.0, 0.0f);
+		RenderModel();
+		glPopMatrix();
+
+		glPushMatrix();
+		glTranslatef(0.0, 2.0, 0.0f);
+		RenderModel();
+		glPopMatrix();
+
+		glPushMatrix();
+		glTranslatef(2.0, -2.0, 0.0f);
+		RenderModel();
+		glPopMatrix();
+
+		glPushMatrix();
+		glTranslatef(2.0, 2.0, 0.0f);
+		RenderModel();
+		glPopMatrix();
+
+		glPushMatrix();
+		glTranslatef(2.0, -2.0, 2.0f);
+		RenderModel();
+		glPopMatrix();
+
+		glPushMatrix();
+		glTranslatef(2.0, 2.0, 2.0f);
+		RenderModel();
+		glPopMatrix();
 	glBegin(GL_LINES);
 		glColor3d(1, 0, 0);
 		glVertex3f(0, -3, 0);
@@ -161,21 +242,39 @@ void CRenderer::Update()
 	glPopMatrix();
 
 	//glPopMatrix();
-	theta += 0.05f;
-	gluDeleteQuadric(quadObj);
+	theta += 1.f;
 }
 
 
 void CRenderer::Init(ISystem *pSystem)
 {
-	DWORD w = 400, h = 400;
+	DWORD w = 700, h = 700;
 
 	m_pSystem = pSystem;
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_SMOOTH);
-	/*glEnable(GL_CULL_FACE);
-	glCullFace(GL_FRONT);  
-	glFrontFace(GL_CW); */
+	glEnable(GL_CULL_FACE);
+	glEnable(GL_LINE_SMOOTH);
+	glCullFace(GL_BACK);  
+	glFrontFace(GL_CCW); 
+
+	GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
+	GLfloat mat_shininess[] = { 20.0 };
+	GLfloat light_position[] = { 1.0, 1.0, 1.0, 1.0 };
+	GLfloat whight_light[] = { 1.0, 1.0, 1.0, 1.5 };
+	glShadeModel(GL_SMOOTH);
+
+	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+	glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
+	
+	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, whight_light);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, whight_light);
+
+	//glEnable(GL_FOG);
+
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
 	//openglWindow->GetWindowSize(&w, &h);
 	glViewport(0, 0, w, h);
 

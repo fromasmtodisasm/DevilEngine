@@ -27,6 +27,7 @@ protected:
 	IInput *m_pIInput;
 //	IMouseHandler *m_pIMouseHandler;
 	IMouse *m_pIMouse;
+	bool b_renderToMain = false;
 public:
 	OpenGLWindow(char *Name);
 	~OpenGLWindow();
@@ -50,6 +51,7 @@ public:
 	void GetWindowSize(DWORD *width, DWORD *height);
 	HWND GetWindow();
 	void SetWindow(HWND wnd);
+	void setMenuName(LPCTSTR name) { wc.lpszMenuName = name; };
 	void SetRender(IRenderer *m_pIRenderer);
 	void SetInputHandler(IInput *pIInput);
 };
